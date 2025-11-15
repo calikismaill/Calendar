@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <title>24-48 Çalışma / Tatil Takvimi</title>
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+
+  <style>
+    /* MİNİMALİST TASARIM NOTLARI:
+      - Sıfır Kart: Tüm .card yapıları kaldırıldı. Gölgeler ve sınırlar yerine 
+        bölümler arası boşluk (margin) kullanıldı.
+      - Renk Odaklı: Takvim hücrelerindeki "Çalışma", "Tatil" metinleri kaldırıldı. 
+        Tüm bilgi renkle aktarılıyor. Bu, "yazı kayması" sorununu çözdü.
+      - Tipografi: Sistem fontları kullanılarak temiz bir görünüm elde edildi.
+      - Kontroller: "Güncelle" butonu kaldırıldı. Tarih seçimi veya kısayol 
+        butonlarına tıklama, takvimi anında güncelliyor.
+      - Responisve: Takvim, `aspect-ratio` ile kare hücrelerini korur ve 
+        mobil cihazlarda mükemmel görünür.
+    */
+
+    /* Genel Sıfırlama ve Temel */
+    html, body {
+      -webkit-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+      touch-action: manipulation;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+        Roboto, "Helvetica Neue", Arial, sans-serif;
+      background: #111827; /* Koyu Gri (Slate 900) */
+      color: #d1d5db; /* Açık Gri (Gray 300) */
+      display: flex;
+      justify-content: center;
+      padding: 16px;
+      box-sizing: border-box; /* Padding'in genişliği etkilememesi için */
+    }
+
+    /* Ana İçerik Konteyneri */
+    .container {
+      width: 100%;
+      max-width: 500px; /* Takvim için daha dar ve odaklı bir genişlik */
+      margin: 0 auto;
+    }
+
+    h1 {
+      font-size: 1.75rem;
+      margin: 0 0 8px;
+      color: #f9fafb; /* Beyaz (Gray 50) */
+    }
+
+    .description {
+      font-size: 0.95rem;
+      color: #9ca3af; /* Gri (Gray 400) */
+      margin-bottom: 24px;
+      line-height: 1.5;
+    }
+
+    /* Ayar Bölümü */
+    .controls-section {
+      margin-bottom: 24px;
+    }
+
+    .controls-label {
+      font-size: 0.9rem;
+      font-weight: 500;
+      margin-bottom: 12px;
+      display: block;
+      color: #e5e7eb; /* Beyaz (Gray 200) */
+    }
+
+    .controls-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+      gap: 10px;
+    }
+
+    /* Kısayol Butonları ve Tarih Girişi */
+    .control-btn,
+    input[type="date"] {
+      padding: 10px 12px;
+      border-radius: 8px;
+      border: 1px solid #374151; /* Gri (Gray 700) */
+      background: #1f2937; /* Gri (Gray 800) */
+      color: #e5e7eb;
+      font-size: 0.9rem;
+      font-weight: 500;
+      cursor: pointer;
+      text-align: center;
+      transition: all 0.2s ease;
+      -webkit-appearance: none; /* iOS'taki varsayılan stili kaldır */
+      box-sizing: border-box; /* Padding'in genişliği etkilememesi için */
+    }
+
+    .control-btn:hover {
+      border-color: #4b5563; /* Gri (Gray 600) */
+      background: #374151;
+    }
+
+    /* Aktif/Seçili Buton Stili */
+    .control-btn.active {
+      background: #2563eb; /* Mavi (Blue 600) */
+      border-color: #2563eb;
+      color: #ffffff;
+      font-weight: 600;
+    }
+
+    input[type="date"] {
+      grid-column: 1 / -1; /* Tarih seçici tam genişlik kaplasın */
+    }
+    
+    /* Chrome/Edge'de tarih ikonu rengi */
+    input[type="date"]::-webkit-calendar-picker-indicator {
+      filter: invert(0.8);
+    }
+
+    /* Takvim Bölümü */
+    .calendar-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+    }
+
+    .month-title {
+      font-weight: 600;
+      font-size: 1.2rem;
+      color: #f9fafb;
+    }
+
+    .cal-nav-btn {
+      border-radius: 999px;
+      border: 1px solid #374151;
+      background: transparent;
+      color: #e5e7eb;
+      padding: 6px 10px;
+      font-size: 0.85rem;
+      cursor: pointer;
+      width: 80px; /* Butonların kaymasını engelle */
+      text-align: center;
+    }
+    .cal-nav-btn:hover {
+       background: #374151;
+    }
+    .cal-nav-btn:active {
+      transform: scale(0.97);
+    }
+    
+    /* Minimalist Gösterge (Legend) */
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      font-size: 0.85rem;
+      margin-bottom: 16px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid #374151;
+    }
+
+    .legend-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 999px;
+    }
+
+    .dot-work {
+      background: #e11d48; /* Canlı Kırmızı (Rose 600) */
+    }
+
+    .dot-off {
+      background: #059669; /* Canlı Yeşil (Emerald 600) */
+    }
+    
+    .dot-today {
+      /* Bugün'ü nokta yerine kenarlıkla göster */
+      background: transparent;
+      width: 10px;
+      height: 10px;
+      border: 2px solid #2563eb; /* Mavi (Blue 600) */
+    }
+
+    /* Takvim Izgarası */
+    .calendar-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 6px; /* Hücreler arası boşluk */
+    }
+
+    .weekday-header {
+      text-align: center;
+      padding: 4px 0;
+      color: #9ca3af; /* Gri (Gray 400) */
+      font-size: 0.8rem;
+      font-weight: 500;
+    }
+
+    /* GÜN HÜCRELERİ (En Önemli Değişiklik) */
+    .day-cell {
+      /* Kare hücreler için */
+      aspect-ratio: 1 / 1; 
+      
+      border-radius: 8px;
+      box-sizing: border-box;
+      
+      /* Sayıyı ortalamak için */
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      
+      font-size: 0.9rem;
+      font-weight: 500;
+      
+      /* Varsayılan hücre rengi */
+      background: #1f2937; /* Gri (Gray 800) */
+      color: #d1d5db; /* Gri (Gray 300) */
+      
+      transition: all 0.2s;
+      position: relative;
+    }
+    
+    /* Hafta sonu günlerinin sayı rengi */
+    .weekend {
+      color: #9ca3af; /* Gri (Gray 400) */
+    }
+
+    /* RENK ODAKLI STİLLER (METİN YOK) */
+    .work-day {
+      background: #e11d48; /* Kırmızı */
+      color: #ffffff; /* Beyaz yazı */
+    }
+
+    .off-day {
+      background: #059669; /* Yeşil */
+      color: #ffffff; /* Beyaz yazı */
+    }
+
+    /* "Bugün" işareti: Sayının etrafında bir daire */
+    .today .day-number {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 1.8em;
+      height: 1.8em;
+      border-radius: 50%;
+      background: #2563eb; /* Mavi (Blue 600) */
+      color: #ffffff;
+    }
+    
+    /* Çalışma/Tatil günlerinde "Bugün" işareti */
+    .work-day.today .day-number,
+    .off-day.today .day-number {
+      background: #ffffff;
+      color: #111827; /* Koyu renk yazı */
+      font-weight: 600;
+    }
+
+    .empty {
+      background: transparent;
+    }
+  </style>
+</head>
+<body>
+<main class="container">
+  <p class="description">
+    En son <strong>işten çıktığın günü</strong> seç; 24 saat çalışma / 48 saat tatil döngüne göre takvim otomatik olarak renklensin.
+  </p>
+
+  <section class="controls-section">
+    <label class="controls-label">En son işten çıktığın gün:</label>
+    
+    <div class="controls-grid">
+      <button type="button" class="control-btn" id="setToday">Bugün çıktım</button>
+      <button type="button" class="control-btn" id="setYesterday">Dün çıktım</button>
+      <button type="button" class="control-btn" id="setTwoDaysAgo">2 gün önce çıktım</button>
+      <input type="date" id="lastExitDate" />
+    </div>
+  </section>
+
+  <section>
+    <div class="calendar-header">
+      <button class="cal-nav-btn" id="prevMonthBtn">◀ Önceki</button>
+      <div class="month-title" id="monthTitle"></div>
+      <button class="cal-nav-btn" id="nextMonthBtn">Sonraki ▶</button>
+    </div>
+
+    <div class="legend">
+      <div class="legend-item">
+        <span class="dot dot-work"></span> Çalışma
+      </div>
+      <div class="legend-item">
+        <span class="dot dot-off"></span> Tatil
+      </div>
+      <div class="legend-item">
+        <span class="dot dot-today"></span> Bugün
+      </div>
+    </div>
+
+    <div class="calendar-grid" id="calendarGrid">
+      </div>
+  </section>
+
+</main>
+
+<script>
+  // === DOKUNMATİK İYİLEŞTİRMELER ===
+  document.addEventListener("contextmenu", (e) => e.preventDefault());
+  let lastTouchEnd = 0;
+  document.addEventListener("touchend", (event) => {
+    const now = Date.now();
+    if (now - lastTouchEnd <= 300) {
+      event.preventDefault();
+    }
+    lastTouchEnd = now;
+  }, { passive: false });
+
+  // === SABİTLER VE DEĞİŞKENLER ===
+  const trMonths = [
+    "Ocak", "Şubat", "Mart", "Nisan", "Mayıs", "Haziran",
+    "Temmuz", "Ağustos", "Eylül", "Ekim", "Kasım", "Aralık"
+  ];
+  const trWeekdaysShort = ["Pzt", "Sal", "Çar", "Per", "Cum", "Cmt", "Paz"];
+
+  const lastExitInput = document.getElementById("lastExitDate");
+  const setTodayBtn = document.getElementById("setToday");
+  const setYesterdayBtn = document.getElementById("setYesterday");
+  const setTwoDaysAgoBtn = document.getElementById("setTwoDaysAgo");
+  const monthTitle = document.getElementById("monthTitle");
+  const calendarGrid = document.getElementById("calendarGrid");
+  const prevMonthBtn = document.getElementById("prevMonthBtn");
+  const nextMonthBtn = document.getElementById("nextMonthBtn");
+
+  let lastExitDate = null;
+  const today = new Date();
+  let currentYear = today.getFullYear();
+  let currentMonth = today.getMonth();
+
+  // === TEMEL FONKSİYONLAR ===
+
+  // Tarihi YYYY-MM-DD formatına çevirir
+  function formatDate(d) {
+    const y = d.getFullYear();
+    const m = String(d.getMonth() + 1).padStart(2, "0");
+    const da = String(d.getDate()).padStart(2, "0");
+    return `${y}-${m}-${da}`;
+  }
+  
+  // Tarih objesini saat bilgisinden arındırır
+  function toDateOnly(d) {
+    return new Date(d.getFullYear(), d.getMonth(), d.getDate());
+  }
+  
+  // İki tarih objesi aynı gün mü diye bakar
+  function sameDate(a, b) {
+    return (
+      a.getFullYear() === b.getFullYear() &&
+      a.getMonth() === b.getMonth() &&
+      a.getDate() === b.getDate()
+    );
+  }
+
+  // === UYGULAMA MANTIĞI ===
+  
+  // Çıkış tarihini kaydeder, arayüzü günceller
+  function saveLastExitDate(dateStr) {
+    if (!dateStr) return;
+    localStorage.setItem("lastExitDate_2448_minimal", dateStr);
+    lastExitDate = new Date(dateStr + "T00:00:00"); // Saat dilimi sorunları için
+    
+    // Aktif butonu güncelle
+    updateActiveButtons(dateStr);
+    
+    // Takvimi yeniden çiz
+    renderCalendar();
+  }
+  
+  // Kısayol butonlarının 'active' sınıfını ayarlar
+  function updateActiveButtons(dateStr) {
+    const todayDate = new Date();
+    const yesterdayDate = new Date();
+    yesterdayDate.setDate(todayDate.getDate() - 1);
+    const twoDaysAgoDate = new Date();
+    twoDaysAgoDate.setDate(todayDate.getDate() - 2);
+
+    const todayStr = formatDate(todayDate);
+    const yesterdayStr = formatDate(yesterdayDate);
+    const twoDaysAgoStr = formatDate(twoDaysAgoDate);
+
+    setTodayBtn.classList.toggle("active", dateStr === todayStr);
+    setYesterdayBtn.classList.toggle("active", dateStr === yesterdayStr);
+    setTwoDaysAgoBtn.classList.toggle("active", dateStr === twoDaysAgoStr);
+  }
+
+  // Tarihi bugüne, düne veya 2 gün önceye ayarlar
+  function setExitFromOffset(offsetDays) {
+    const d = new Date();
+    d.setDate(d.getDate() - offsetDays);
+    const str = formatDate(d);
+    lastExitInput.value = str; // Input'u da güncelle
+    saveLastExitDate(str);
+  }
+
+  // Hafızadan son tarihi yükler
+  function loadLastExitFromStorage() {
+    const stored = localStorage.getItem("lastExitDate_2448_minimal");
+    if (stored) {
+      lastExitInput.value = stored;
+      saveLastExitDate(stored); // Bu, renderCalendar'ı ve updateActiveButtons'u tetikler
+    } else {
+      // Varsayılan: bugün işten çıktın
+      setExitFromOffset(0);
+    }
+  }
+
+  // 24-48 döngüsünü hesaplar
+  // diff % 3 == 0 → Tatil 1
+  // diff % 3 == 1 → Tatil 2
+  // diff % 3 == 2 → Çalışma
+  // Minimalist tasarım için "Tatil 1" ve "Tatil 2"yi "off" olarak birleştirdik.
+  function getDayType(date) {
+    if (!lastExitDate) return "none";
+    const msPerDay = 24 * 60 * 60 * 1000;
+    const diff = Math.floor((toDateOnly(date) - lastExitDate) / msPerDay);
+    const mod = ((diff % 3) + 3) % 3; // Negatiflere karşı
+    
+    if (mod === 0 || mod === 1) return "off";  // Tatil
+    if (mod === 2) return "work"; // Çalışma
+    return "none";
+  }
+
+  // 0=Pazar, 6=Cumartesi
+  function isWeekend(date) {
+    const jsDay = date.getDay();
+    return jsDay === 0 || jsDay === 6;
+  }
+
+  // === TAKVİMİ ÇİZME ===
+  function renderCalendar() {
+    calendarGrid.innerHTML = "";
+    const todayDateOnly = toDateOnly(today);
+
+    // Hafta başlıkları (Pzt–Paz)
+    trWeekdaysShort.forEach(day => {
+      const div = document.createElement("div");
+      div.className = "weekday-header";
+      div.textContent = day;
+      calendarGrid.appendChild(div);
+    });
+
+    const firstDay = new Date(currentYear, currentMonth, 1);
+    const lastDay = new Date(currentYear, currentMonth + 1, 0);
+    const firstWeekdayIndex = (firstDay.getDay() + 6) % 7; // 0=Pzt
+
+    // Boş hücreler
+    for (let i = 0; i < firstWeekdayIndex; i++) {
+      const cell = document.createElement("div");
+      cell.className = "day-cell empty";
+      calendarGrid.appendChild(cell);
+    }
+
+    // Gün hücreleri
+    for (let day = 1; day <= lastDay.getDate(); day++) {
+      const date = new Date(currentYear, currentMonth, day);
+      const cell = document.createElement("div");
+      cell.className = "day-cell";
+
+      const type = getDayType(date);
+
+      if (type === "work") {
+        cell.classList.add("work-day");
+      } else if (type === "off") {
+        cell.classList.add("off-day");
+      }
+
+      if (isWeekend(date)) {
+        cell.classList.add("weekend");
+      }
+
+      if (sameDate(date, todayDateOnly)) {
+        cell.classList.add("today");
+      }
+      
+      // MİNİMALİST DEĞİŞİKLİK:
+      // "Çalışma", "Tatil" yazısı yok. Sadece günün sayısı.
+      const numSpan = document.createElement("span");
+      numSpan.className = "day-number";
+      numSpan.textContent = day;
+
+      cell.appendChild(numSpan);
+      calendarGrid.appendChild(cell);
+    }
+
+    monthTitle.textContent = `${trMonths[currentMonth]} ${currentYear}`;
+  }
+
+  // === OLAY DİNLEYİCİLERİ ===
+  
+  // "Güncelle" butonu yok, seçim anında günceller
+  lastExitInput.addEventListener("change", (e) => {
+    if (!e.target.value) return;
+    saveLastExitDate(e.target.value);
+  });
+
+  setTodayBtn.addEventListener("click", () => setExitFromOffset(0));
+  setYesterdayBtn.addEventListener("click", () => setExitFromOffset(1));
+  setTwoDaysAgoBtn.addEventListener("click", () => setExitFromOffset(2));
+
+  prevMonthBtn.addEventListener("click", () => {
+    currentMonth--;
+    if (currentMonth < 0) {
+      currentMonth = 11;
+      currentYear--;
+    }
+    renderCalendar();
+  });
+
+  nextMonthBtn.addEventListener("click", () => {
+    currentMonth++;
+    if (currentMonth > 11) {
+      currentMonth = 0;
+      currentYear++;
+    }
+    renderCalendar();
+  });
+
+  // === BAŞLANGIÇ ===
+  loadLastExitFromStorage();
+</script>
+</body>
+</html>
