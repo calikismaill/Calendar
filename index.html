@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html lang="tr">
 <head>
   <meta charset="UTF-8" />
@@ -7,15 +6,22 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
 
   <style>
+    /* VERSİYON 3 - ULTRA KOMPAKT & RESPONSIVE
+       Tek sayfaya sığacak şekilde optimize edildi, tüm boşluklar minimize edildi.
+    */
     * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
+      -webkit-touch-callout: none;
+      -webkit-user-select: none;
+      -khtml-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
     }
 
     html, body {
-      -webkit-user-select: none;
-      user-select: none;
       -webkit-tap-highlight-color: transparent;
       touch-action: manipulation;
       -webkit-font-smoothing: antialiased;
@@ -26,135 +32,209 @@
     body {
       font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
       background: #0a0a0a;
-      color: #e5e5e5;
+      color: #f5f5f5;
       display: flex;
-      align-items: center;
       justify-content: center;
-      padding: 12px;
+      align-items: center;
+      padding: 8px;
     }
 
     .container {
       width: 100%;
-      max-width: 440px;
+      max-width: 420px;
+      height: 100%;
+      max-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+      overflow-x: hidden;
+      -webkit-overflow-scrolling: touch;
     }
 
-    /* Başlık */
+    /* Başlık - Ultra kompakt */
+    .header {
+      text-align: center;
+      margin-bottom: 8px;
+      flex-shrink: 0;
+    }
+
     h1 {
       font-size: 1.3rem;
-      font-weight: 700;
+      font-weight: 800;
       color: #fff;
-      margin-bottom: 4px;
+      margin-bottom: 2px;
+      letter-spacing: -0.02em;
       display: flex;
       align-items: center;
+      justify-content: center;
       gap: 8px;
-      letter-spacing: -0.02em;
     }
 
     .calendar-icon {
-      width: 28px;
-      height: 28px;
+      width: 24px;
+      height: 24px;
       stroke: #fff;
-      stroke-width: 2.5;
+      stroke-width: 2;
       fill: none;
     }
 
     .description {
       font-size: 0.8rem;
       color: #888;
-      margin-bottom: 14px;
-      line-height: 1.4;
+      line-height: 1.3;
     }
 
-    /* Bölüm Başlıkları */
-    .section-label {
-      font-size: 0.7rem;
+    /* Ayarlar Bölümü - Ultra kompakt grid */
+    .controls {
+      display: grid;
+      grid-template-columns: 2fr 3fr;
+      gap: 6px;
+      margin-bottom: 8px;
+      flex-shrink: 0;
+    }
+
+    .control-group {
+      background: #1a1a1a;
+      border-radius: 10px;
+      padding: 8px;
+      border: 1.5px solid #2a2a2a;
+    }
+
+    .control-label {
+      font-size: 0.65rem;
       font-weight: 700;
       color: #666;
       text-transform: uppercase;
-      letter-spacing: 0.08em;
+      letter-spacing: 0.05em;
       margin-bottom: 6px;
-    }
-
-    /* Vardiya Tipi */
-    .shift-types {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 8px;
-      margin-bottom: 12px;
-    }
-
-    .shift-btn {
-      padding: 12px;
-      border-radius: 10px;
-      border: 2px solid #222;
-      background: #141414;
-      color: #888;
-      font-size: 1.1rem;
-      font-weight: 800;
-      cursor: pointer;
-      transition: all 0.2s;
       text-align: center;
     }
 
-    .shift-btn:active {
-      transform: scale(0.98);
+    .shift-btns {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
     }
 
-    .shift-btn.active {
-      background: #2563eb;
-      border-color: #2563eb;
-      color: #fff;
-      box-shadow: 0 0 20px rgba(37, 99, 235, 0.4);
-    }
-
-    /* Çıkış Tarihi */
-    .controls-grid {
+    .exit-btns {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: 8px;
-      margin-bottom: 12px;
+      gap: 4px;
     }
 
-    .control-btn {
-      padding: 10px;
-      border-radius: 10px;
-      border: 2px solid #222;
-      background: #141414;
+    .config-btn {
+      padding: 8px 4px;
+      border-radius: 7px;
+      border: 1.5px solid #333;
+      background: #252525;
       color: #888;
       font-size: 0.8rem;
       font-weight: 700;
       cursor: pointer;
-      transition: all 0.2s;
+      transition: all 0.15s ease;
+      text-align: center;
     }
 
-    .control-btn:active {
-      transform: scale(0.98);
+    .config-btn:active {
+      transform: scale(0.97);
     }
 
-    .control-btn.active {
-      background: #10b981;
-      border-color: #10b981;
+    .config-btn.active {
+      background: #2563eb;
+      border-color: #2563eb;
       color: #fff;
-      box-shadow: 0 0 20px rgba(16, 185, 129, 0.4);
     }
 
-    /* Takvim Başlık */
-    .calendar-header {
+    /* Takvim Başlık ve İstatistik - Tek satırda */
+    .calendar-info {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 6px;
+      flex-shrink: 0;
+    }
+
+    /* Ay başlığı */
+    .month-title-btn {
+      flex: 1;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 8px;
-      margin-bottom: 10px;
+      padding: 0 10px;
+      height: 38px;
+      border-radius: 8px;
+      border: 1.5px solid #2a2a2a;
+      background: #1a1a1a;
+      color: #fff;
+      font-size: 0.95rem;
+      font-weight: 800;
+      cursor: pointer;
+      transition: all 0.15s;
+      letter-spacing: -0.01em;
+    }
+    
+    .month-title-btn:active {
+      background: #252525;
+    }
+
+    .chevron-icon {
+      width: 16px;
+      height: 16px;
+      stroke: #666;
+      stroke-width: 3;
+      fill: none;
+    }
+
+    /* İstatistik kutuları - Küçültülmüş */
+    .stats-compact {
+      display: flex;
+      gap: 4px;
+    }
+
+    .stat-mini {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 6px 10px;
+      border-radius: 8px;
+      background: #1a1a1a;
+      border: 1.5px solid #2a2a2a;
+      min-width: 52px;
+    }
+
+    .stat-mini .value {
+      font-size: 1.1rem;
+      font-weight: 800;
+      line-height: 1;
+    }
+
+    .stat-mini.work .value { color: #ef4444; }
+    .stat-mini.off .value { color: #22c55e; }
+
+    .stat-mini .label {
+      font-size: 0.6rem;
+      color: #666;
+      font-weight: 700;
+      margin-top: 2px;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+
+    /* Navigasyon düğmeleri */
+    .nav-group {
+      display: flex;
+      gap: 4px;
     }
 
     .nav-btn {
-      width: 42px;
-      height: 42px;
-      border-radius: 10px;
-      border: 2px solid #222;
-      background: #141414;
+      width: 38px;
+      height: 38px;
+      border-radius: 8px;
+      border: 1.5px solid #2a2a2a;
+      background: #1a1a1a;
       cursor: pointer;
-      transition: all 0.2s;
+      transition: all 0.15s;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -162,153 +242,100 @@
 
     .nav-btn:active {
       transform: scale(0.95);
-      background: #1a1a1a;
+      background: #252525;
     }
 
     .nav-icon {
       width: 20px;
       height: 20px;
       stroke: #e5e5e5;
-      stroke-width: 3;
       fill: none;
     }
-
-    .month-title {
-      flex: 1;
-      padding: 11px 14px;
-      border-radius: 10px;
-      border: 2px solid #222;
-      background: #141414;
-      color: #fff;
-      font-size: 1rem;
-      font-weight: 700;
-      text-align: center;
-      cursor: pointer;
-      transition: all 0.2s;
-      letter-spacing: -0.01em;
+    .nav-icon.arrow-icon {
+      stroke-width: 3.5;
+    }
+    .nav-icon.today-icon {
+      stroke-width: 2.5;
     }
 
-    .month-title:active {
-      background: #1a1a1a;
-    }
-
-    /* İstatistik */
-    .stats {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 8px;
-      margin-bottom: 10px;
-    }
-
-    .stat-box {
-      padding: 10px 12px;
-      border-radius: 10px;
-      border: 2px solid #222;
-      background: #141414;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-    }
-
-    .stat-value {
-      font-size: 1.3rem;
-      font-weight: 800;
-    }
-
-    .stat-work .stat-value { color: #ef4444; }
-    .stat-off .stat-value { color: #10b981; }
-
-    .stat-label {
-      font-size: 0.75rem;
-      color: #666;
-      font-weight: 700;
-    }
-
-    /* Gösterge */
+    /* Gösterge - Ultra kompakt */
     .legend {
       display: flex;
-      gap: 14px;
+      gap: 12px;
       justify-content: center;
-      margin-bottom: 10px;
-      font-size: 0.7rem;
+      margin-bottom: 6px;
+      font-size: 0.65rem;
       font-weight: 700;
+      flex-shrink: 0;
     }
 
     .legend-item {
       display: flex;
       align-items: center;
-      gap: 5px;
+      gap: 4px;
       color: #666;
     }
 
     .dot {
-      width: 10px;
-      height: 10px;
-      border-radius: 3px;
-    }
-
-    .dot-work { background: #ef4444; }
-    .dot-off { background: #10b981; }
-    .dot-today { 
-      background: transparent; 
-      border: 2.5px solid #2563eb;
       width: 8px;
       height: 8px;
+      border-radius: 50%;
     }
 
-    /* Takvim */
+    .dot-work { background: #ef4444; } 
+    .dot-off { background: #22c55e; }
+    .dot-today { background: #f5f5f5; }
+
+    /* Takvim - Ultra kompakt */
     .calendar-grid {
       display: grid;
       grid-template-columns: repeat(7, 1fr);
-      gap: 4px;
-      background: #141414;
-      padding: 10px;
-      border-radius: 12px;
-      border: 2px solid #222;
+      gap: 3px;
+      background: #1a1a1a;
+      padding: 8px;
+      border-radius: 10px;
+      border: 1.5px solid #2a2a2a;
+      flex-shrink: 0;
     }
 
     .weekday {
       text-align: center;
-      font-size: 0.65rem;
+      font-size: 0.6rem;
       font-weight: 800;
-      color: #666;
-      padding: 4px 0;
+      color: #555;
+      padding: 3px 0 6px 0;
       text-transform: uppercase;
       letter-spacing: 0.03em;
     }
 
     .day-cell {
       aspect-ratio: 1;
-      border-radius: 8px;
+      border-radius: 6px;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 0.9rem;
+      font-size: 0.8rem;
       font-weight: 700;
-      background: #1a1a1a;
-      color: #e5e5e5;
+      background: #252525;
+      color: #f5f5f5;
       position: relative;
     }
 
     .day-cell.weekend {
-      color: #0a0a0a;
+      color: #888;
     }
 
     .day-cell.work-day {
-      background: linear-gradient(135deg, #ef4444, #dc2626);
+      background: #ef4444;
       color: #fff;
-    }
-
-    .day-cell.work-day.weekend {
-      color: #0a0a0a;
     }
 
     .day-cell.off-day {
-      background: linear-gradient(135deg, #10b981, #059669);
+      background: #22c55e;
       color: #fff;
     }
 
+    .day-cell.work-day.weekend,
     .day-cell.off-day.weekend {
       color: #0a0a0a;
     }
@@ -323,27 +350,25 @@
       align-items: center;
       justify-content: center;
       font-weight: 800;
-      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.3);
     }
 
     .day-cell.work-day.today .day-number,
     .day-cell.off-day.today .day-number {
       background: #fff;
       color: #0a0a0a;
-      box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.4);
     }
 
     .day-cell.empty {
       background: transparent;
     }
 
-    /* Modal */
+    /* Modal - Aynı stiller */
     .modal-overlay {
       display: none;
       position: fixed;
       inset: 0;
       background: rgba(0, 0, 0, 0.8);
-      backdrop-filter: blur(8px);
+      backdrop-filter: blur(6px);
       align-items: center;
       justify-content: center;
       z-index: 1000;
@@ -354,99 +379,99 @@
     }
 
     .modal {
-      background: #141414;
-      border-radius: 16px;
-      padding: 20px;
+      background: #1a1a1a;
+      border-radius: 14px;
+      padding: 18px;
       width: 90%;
       max-width: 320px;
-      border: 2px solid #222;
+      border: 1.5px solid #2a2a2a;
     }
 
     .modal-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 14px;
+      margin-bottom: 12px;
     }
 
     .modal-title {
-      font-size: 1.1rem;
+      font-size: 1rem;
       font-weight: 700;
       color: #fff;
     }
 
     .close-btn {
-      background: #1a1a1a;
+      background: #252525;
       border: none;
       color: #888;
-      font-size: 1.5rem;
-      width: 34px;
-      height: 34px;
-      border-radius: 8px;
+      font-size: 1.4rem;
+      width: 32px;
+      height: 32px;
+      border-radius: 7px;
       cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
-      transition: all 0.2s;
+      transition: all 0.15s;
     }
 
     .close-btn:active {
-      background: #222;
+      background: #2a2a2a;
     }
 
     .year-selector {
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 14px;
-      margin-bottom: 14px;
+      gap: 12px;
+      margin-bottom: 12px;
     }
 
     .year-btn {
-      background: #1a1a1a;
-      border: 2px solid #222;
-      color: #e5e5e5;
-      padding: 8px 14px;
-      border-radius: 8px;
+      background: #252525;
+      border: 1.5px solid #2a2a2a;
+      color: #f5f5f5;
+      padding: 7px 12px;
+      border-radius: 7px;
       font-weight: 700;
-      font-size: 1.1rem;
+      font-size: 1rem;
       cursor: pointer;
-      transition: all 0.2s;
+      transition: all 0.15s;
     }
 
     .year-btn:active {
-      background: #222;
+      background: #2a2a2a;
     }
 
     .year-display {
-      font-size: 1.2rem;
+      font-size: 1.1rem;
       font-weight: 800;
       color: #fff;
-      min-width: 85px;
+      min-width: 80px;
       text-align: center;
     }
 
     .months-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: 8px;
+      gap: 6px;
     }
 
     .month-btn {
-      padding: 12px 8px;
-      background: #1a1a1a;
-      border: 2px solid #222;
-      border-radius: 8px;
+      padding: 10px 6px;
+      background: #252525;
+      border: 1.5px solid #2a2a2a;
+      border-radius: 7px;
       text-align: center;
-      font-size: 0.85rem;
+      font-size: 0.8rem;
       font-weight: 700;
       color: #888;
       cursor: pointer;
-      transition: all 0.2s;
+      transition: all 0.15s;
     }
 
     .month-btn:active {
-      transform: scale(0.96);
+      transform: scale(0.97);
     }
 
     .month-btn.current {
@@ -454,62 +479,127 @@
       border-color: #2563eb;
       color: #fff;
     }
+
+    /* Responsive - Bilgisayar için */
+    @media (min-width: 768px) {
+      body {
+        padding: 20px;
+      }
+
+      .container {
+        max-width: 480px;
+        max-height: 95vh;
+      }
+
+      h1 {
+        font-size: 1.5rem;
+      }
+
+      .description {
+        font-size: 0.85rem;
+      }
+
+      .controls {
+        gap: 8px;
+        margin-bottom: 10px;
+      }
+
+      .control-group {
+        padding: 10px;
+      }
+
+      .config-btn {
+        padding: 10px 6px;
+        font-size: 0.85rem;
+      }
+
+      .calendar-grid {
+        padding: 10px;
+        gap: 4px;
+      }
+
+      .day-cell {
+        font-size: 0.85rem;
+        border-radius: 7px;
+      }
+
+      .weekday {
+        font-size: 0.65rem;
+        padding: 4px 0 7px 0;
+      }
+    }
   </style>
 
 </head>
 <body>
 <div class="container">
-  <h1>
-    <svg class="calendar-icon" viewBox="0 0 24 24">
-      <rect x="3" y="4" width="18" height="18" rx="2"/>
-      <line x1="16" y1="2" x2="16" y2="6"/>
-      <line x1="8" y1="2" x2="8" y2="6"/>
-      <line x1="3" y1="10" x2="21" y2="10"/>
-    </svg>
-    Vardiya Takvimi
-  </h1>
-  <p class="description">Vardiya tipini ve işten çıkış gününü seç.</p>
-
-  <div class="section-label">Vardiya Tipi</div>
-  <div class="shift-types">
-    <button class="shift-btn active" id="shift2448">24/48</button>
-    <button class="shift-btn" id="shift1236">12/36</button>
+  <div class="header">
+    <h1>
+      <svg class="calendar-icon" viewBox="0 0 24 24">
+        <rect x="3" y="4" width="18" height="18" rx="2"/>
+        <line x1="16" y1="2" x2="16" y2="6"/>
+        <line x1="8" y1="2" x2="8" y2="6"/>
+        <line x1="3" y1="10" x2="21" y2="10"/>
+      </svg>
+      Vardiya Takvimi
+    </h1>
+    <p class="description">Vardiya tipini ve işten çıkış gününü seç.</p>
   </div>
 
-  <div class="section-label">İşten Çıkış</div>
-  <div class="controls-grid">
-    <button class="control-btn" id="setYesterday">Dün</button>
-    <button class="control-btn" id="setToday">Bugün</button>
-    <button class="control-btn" id="setTomorrow">Yarın</button>
-  </div>
-
-  <div class="calendar-header">
-    <button class="nav-btn" id="todayBtn">
-      <svg class="nav-icon" viewBox="0 0 24 24">
-        <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/>
-      </svg>
-    </button>
-    <div class="month-title" id="monthTitle"></div>
-    <button class="nav-btn" id="prevBtn">
-      <svg class="nav-icon" viewBox="0 0 24 24">
-        <polyline points="15 18 9 12 15 6"/>
-      </svg>
-    </button>
-    <button class="nav-btn" id="nextBtn">
-      <svg class="nav-icon" viewBox="0 0 24 24">
-        <polyline points="9 18 15 12 9 6"/>
-      </svg>
-    </button>
-  </div>
-
-  <div class="stats">
-    <div class="stat-box stat-work">
-      <span class="stat-value" id="workDays">0</span>
-      <span class="stat-label">Çalışma</span>
+  <div class="controls">
+    <div class="control-group">
+      <div class="control-label">Vardiya</div>
+      <div class="shift-btns">
+        <button class="config-btn active" id="shift2448">24/48</button>
+        <button class="config-btn" id="shift1236">12/36</button>
+      </div>
     </div>
-    <div class="stat-box stat-off">
-      <span class="stat-value" id="offDays">0</span>
-      <span class="stat-label">Tatil</span>
+
+    <div class="control-group">
+      <div class="control-label">İşten Çıkış</div>
+      <div class="exit-btns">
+        <button class="config-btn" id="setYesterday">Dün</button>
+        <button class="config-btn" id="setToday">Bugün</button>
+        <button class="config-btn" id="setTomorrow">Yarın</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="calendar-info">
+    <button class="month-title-btn" id="monthTitle">
+      <span id="monthTitleText"></span>
+      <svg class="chevron-icon" viewBox="0 0 24 24">
+        <path d="m6 9 6 6 6-6"/>
+      </svg>
+    </button>
+    
+    <div class="stats-compact">
+      <div class="stat-mini work">
+        <div class="value" id="workDays">0</div>
+        <div class="label">İş</div>
+      </div>
+      <div class="stat-mini off">
+        <div class="value" id="offDays">0</div>
+        <div class="label">Tatil</div>
+      </div>
+    </div>
+
+    <div class="nav-group">
+      <button class="nav-btn" id="prevBtn">
+        <svg class="nav-icon arrow-icon" viewBox="0 0 24 24">
+          <path d="M15 18L9 12L15 6"/>
+        </svg>
+      </button>
+      <button class="nav-btn" id="todayBtn">
+        <svg class="nav-icon today-icon" viewBox="0 0 24 24">
+           <path d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2zM12 15h.01"/>
+        </svg>
+      </button>
+      <button class="nav-btn" id="nextBtn">
+        <svg class="nav-icon arrow-icon" viewBox="0 0 24 24">
+          <path d="M9 18L15 12L9 6"/>
+        </svg>
+      </button>
     </div>
   </div>
 
@@ -681,7 +771,7 @@
       cal.appendChild(div);
     }
 
-    $("monthTitle").textContent = `${trMonths[currentMonth]} ${currentYear}`;
+    $("monthTitleText").textContent = `${trMonths[currentMonth]} ${currentYear}`;
     calcStats();
   }
 
@@ -744,6 +834,29 @@
   
   $("prevYear").onclick = () => { pickerYear--; renderMonths(); };
   $("nextYear").onclick = () => { pickerYear++; renderMonths(); };
+
+  // Çift tıklama zoom engelleme
+  let lastTouchEnd = 0;
+  document.addEventListener('touchend', function (event) {
+    const now = (new Date()).getTime();
+    if (now - lastTouchEnd <= 300) {
+      event.preventDefault();
+    }
+    lastTouchEnd = now;
+  }, false);
+
+  // Pinch zoom engelleme
+  document.addEventListener('gesturestart', function (e) {
+    e.preventDefault();
+  });
+
+  document.addEventListener('gesturechange', function (e) {
+    e.preventDefault();
+  });
+
+  document.addEventListener('gestureend', function (e) {
+    e.preventDefault();
+  });
 
   load();
 </script>
