@@ -6,466 +6,423 @@
   <title>Vardiya Takvimi</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
 
-  <!-- Lucide Icons -->
-
-  <script src="https://unpkg.com/lucide@latest"></script>
-
   <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
     html, body {
       -webkit-user-select: none;
-      -ms-user-select: none;
       user-select: none;
       -webkit-tap-highlight-color: transparent;
       touch-action: manipulation;
       -webkit-font-smoothing: antialiased;
-      -moz-osx-font-smoothing: grayscale;
       height: 100%;
       overflow: hidden;
     }
 
     body {
-      margin: 0;
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
-        Roboto, "Helvetica Neue", Arial, sans-serif;
-      background: #0f172a;
-      color: #e2e8f0;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+      background: #0a0a0a;
+      color: #e5e5e5;
       display: flex;
-      justify-content: center;
       align-items: center;
+      justify-content: center;
       padding: 12px;
-      box-sizing: border-box;
     }
 
     .container {
       width: 100%;
-      max-width: 480px;
-      margin: 0 auto;
+      max-width: 440px;
     }
 
+    /* Başlık */
     h1 {
       font-size: 1.3rem;
-      margin: 0 0 6px;
-      color: #f8fafc;
       font-weight: 700;
+      color: #fff;
+      margin-bottom: 4px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
       letter-spacing: -0.02em;
+    }
+
+    .calendar-icon {
+      width: 28px;
+      height: 28px;
+      stroke: #fff;
+      stroke-width: 2.5;
+      fill: none;
     }
 
     .description {
       font-size: 0.8rem;
-      color: #64748b;
-      margin-bottom: 12px;
+      color: #888;
+      margin-bottom: 14px;
       line-height: 1.4;
     }
 
-    /* Vardiya Tipi - Daha Az Oval */
-    .shift-label {
+    /* Bölüm Başlıkları */
+    .section-label {
       font-size: 0.7rem;
-      font-weight: 600;
-      margin-bottom: 6px;
-      display: block;
-      color: #94a3b8;
+      font-weight: 700;
+      color: #666;
       text-transform: uppercase;
-      letter-spacing: 0.05em;
+      letter-spacing: 0.08em;
+      margin-bottom: 6px;
     }
 
+    /* Vardiya Tipi */
     .shift-types {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 6px;
+      gap: 8px;
       margin-bottom: 12px;
     }
 
-    .shift-type-btn {
-      padding: 8px 10px;
-      border-radius: 6px;
-      border: 1.5px solid #334155;
-      background: #1e293b;
-      color: #cbd5e1;
-      font-size: 0.8rem;
-      font-weight: 600;
+    .shift-btn {
+      padding: 12px;
+      border-radius: 10px;
+      border: 2px solid #222;
+      background: #141414;
+      color: #888;
+      font-size: 1.1rem;
+      font-weight: 800;
       cursor: pointer;
-      transition: all 0.2s ease;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 2px;
+      transition: all 0.2s;
+      text-align: center;
     }
 
-    .shift-type-btn svg {
-      width: 18px;
-      height: 18px;
-      margin-bottom: 2px;
+    .shift-btn:active {
+      transform: scale(0.98);
     }
 
-    .shift-type-btn:active {
-      transform: scale(0.97);
+    .shift-btn.active {
+      background: #2563eb;
+      border-color: #2563eb;
+      color: #fff;
+      box-shadow: 0 0 20px rgba(37, 99, 235, 0.4);
     }
 
-    .shift-type-btn.active {
-      background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
-      border-color: #3b82f6;
-      color: #ffffff;
-    }
-
-    .shift-main {
-      font-size: 0.95rem;
-      font-weight: 700;
-    }
-
-    .shift-sub {
-      font-size: 0.65rem;
-      opacity: 0.75;
-    }
-
-    /* Çıkış Tarihi - Daha Az Oval */
-    .controls-label {
-      font-size: 0.7rem;
-      font-weight: 600;
-      margin-bottom: 6px;
-      display: block;
-      color: #94a3b8;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-    }
-
+    /* Çıkış Tarihi */
     .controls-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: 6px;
+      gap: 8px;
       margin-bottom: 12px;
     }
 
     .control-btn {
-      padding: 8px 6px;
-      border-radius: 6px;
-      border: 1.5px solid #334155;
-      background: #1e293b;
-      color: #cbd5e1;
-      font-size: 0.75rem;
-      font-weight: 600;
+      padding: 10px;
+      border-radius: 10px;
+      border: 2px solid #222;
+      background: #141414;
+      color: #888;
+      font-size: 0.8rem;
+      font-weight: 700;
       cursor: pointer;
-      text-align: center;
-      transition: all 0.2s ease;
-      box-sizing: border-box;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 3px;
-    }
-
-    .control-btn svg {
-      width: 16px;
-      height: 16px;
+      transition: all 0.2s;
     }
 
     .control-btn:active {
-      transform: scale(0.97);
+      transform: scale(0.98);
     }
 
     .control-btn.active {
-      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+      background: #10b981;
       border-color: #10b981;
-      color: #ffffff;
+      color: #fff;
+      box-shadow: 0 0 20px rgba(16, 185, 129, 0.4);
     }
 
-    /* Takvim Başlık - Yeni Düzen */
+    /* Takvim Başlık */
     .calendar-header {
       display: flex;
       align-items: center;
       justify-content: space-between;
+      gap: 8px;
       margin-bottom: 10px;
-      gap: 10px;
     }
 
-    .today-btn {
-      border-radius: 6px;
-      border: none;
-      background: #1e40af;
-      color: #fff;
-      padding: 10px 14px;
-      font-size: 1.3rem;
+    .nav-btn {
+      width: 42px;
+      height: 42px;
+      border-radius: 10px;
+      border: 2px solid #222;
+      background: #141414;
       cursor: pointer;
-      transition: all 0.2s ease;
+      transition: all 0.2s;
       display: flex;
       align-items: center;
       justify-content: center;
-      line-height: 1;
     }
 
-    .today-btn svg {
-      width: 22px;
-      height: 22px;
-    }
-
-    .today-btn:active {
+    .nav-btn:active {
       transform: scale(0.95);
+      background: #1a1a1a;
+    }
+
+    .nav-icon {
+      width: 20px;
+      height: 20px;
+      stroke: #e5e5e5;
+      stroke-width: 3;
+      fill: none;
     }
 
     .month-title {
-      font-weight: 700;
-      font-size: 1.1rem;
-      color: #f8fafc;
-      letter-spacing: -0.01em;
-      cursor: pointer;
-      padding: 10px 12px;
-      border-radius: 6px;
-      background: #1e293b;
-      border: 1.5px solid #334155;
       flex: 1;
-      text-align: center;
-    }
-
-    .month-nav {
-      display: flex;
-      gap: 6px;
-    }
-
-    .cal-nav-btn {
-      border-radius: 6px;
-      border: 1.5px solid #334155;
-      background: #1e293b;
-      color: #cbd5e1;
-      padding: 10px 16px;
+      padding: 11px 14px;
+      border-radius: 10px;
+      border: 2px solid #222;
+      background: #141414;
+      color: #fff;
       font-size: 1rem;
-      font-weight: 600;
+      font-weight: 700;
+      text-align: center;
       cursor: pointer;
-      transition: all 0.2s ease;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      transition: all 0.2s;
+      letter-spacing: -0.01em;
     }
 
-    .cal-nav-btn svg {
-      width: 20px;
-      height: 20px;
+    .month-title:active {
+      background: #1a1a1a;
     }
 
-    .cal-nav-btn:active {
-      transform: scale(0.95);
-    }
-
-    /* İstatistik - Yatay Düzen */
+    /* İstatistik */
     .stats {
-      display: flex;
-      gap: 6px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
       margin-bottom: 10px;
-      font-size: 0.75rem;
     }
 
-    .stat-item {
-      flex: 1;
-      padding: 8px 10px;
-      border-radius: 6px;
-      background: #1e293b;
-      border: 1.5px solid #334155;
+    .stat-box {
+      padding: 10px 12px;
+      border-radius: 10px;
+      border: 2px solid #222;
+      background: #141414;
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 6px;
+      gap: 8px;
     }
 
     .stat-value {
-      font-size: 1.1rem;
-      font-weight: 700;
+      font-size: 1.3rem;
+      font-weight: 800;
     }
 
     .stat-work .stat-value { color: #ef4444; }
     .stat-off .stat-value { color: #10b981; }
 
     .stat-label {
-      font-size: 0.7rem;
-      color: #64748b;
+      font-size: 0.75rem;
+      color: #666;
+      font-weight: 700;
     }
 
     /* Gösterge */
     .legend {
       display: flex;
-      gap: 12px;
-      font-size: 0.7rem;
-      margin-bottom: 10px;
+      gap: 14px;
       justify-content: center;
+      margin-bottom: 10px;
+      font-size: 0.7rem;
+      font-weight: 700;
     }
 
     .legend-item {
-      display: inline-flex;
+      display: flex;
       align-items: center;
-      gap: 4px;
-      color: #94a3b8;
+      gap: 5px;
+      color: #666;
     }
 
     .dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 999px;
+      width: 10px;
+      height: 10px;
+      border-radius: 3px;
     }
 
     .dot-work { background: #ef4444; }
     .dot-off { background: #10b981; }
-    .dot-today {
-      background: transparent;
-      width: 6px;
-      height: 6px;
-      border: 2px solid #3b82f6;
+    .dot-today { 
+      background: transparent; 
+      border: 2.5px solid #2563eb;
+      width: 8px;
+      height: 8px;
     }
 
-    /* Takvim - Daha Az Oval */
+    /* Takvim */
     .calendar-grid {
       display: grid;
       grid-template-columns: repeat(7, 1fr);
       gap: 4px;
+      background: #141414;
+      padding: 10px;
+      border-radius: 12px;
+      border: 2px solid #222;
     }
 
-    .weekday-header {
+    .weekday {
       text-align: center;
-      padding: 4px 0;
-      color: #475569;
       font-size: 0.65rem;
-      font-weight: 700;
+      font-weight: 800;
+      color: #666;
+      padding: 4px 0;
       text-transform: uppercase;
-      letter-spacing: 0.05em;
+      letter-spacing: 0.03em;
     }
 
     .day-cell {
-      aspect-ratio: 1 / 1;
-      border-radius: 6px;
-      box-sizing: border-box;
+      aspect-ratio: 1;
+      border-radius: 8px;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 0.85rem;
-      font-weight: 600;
-      background: #1e293b;
-      color: #cbd5e1;
-      transition: all 0.2s;
-      position: relative;
-      border: 1.5px solid transparent;
-    }
-
-    /* Hafta sonu - Siyah yazı */
-    .weekend {
-      color: #0f172a;
-    }
-
-    .work-day {
-      background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
-      color: #ffffff;
-      border-color: transparent;
-    }
-
-    .off-day {
-      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-      color: #ffffff;
-      border-color: transparent;
-    }
-
-    /* Hafta sonu çalışma/tatil günlerinde siyah yazı */
-    .work-day.weekend,
-    .off-day.weekend {
-      color: #0f172a;
-    }
-
-    .today .day-number {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      width: 1.9em;
-      height: 1.9em;
-      border-radius: 50%;
-      background: #3b82f6;
-      color: #ffffff;
-      box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.3);
-    }
-
-    .work-day.today .day-number,
-    .off-day.today .day-number {
-      background: #ffffff;
-      color: #0f172a;
+      font-size: 0.9rem;
       font-weight: 700;
-      box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.4);
+      background: #1a1a1a;
+      color: #e5e5e5;
+      position: relative;
     }
 
-    .empty {
+    .day-cell.weekend {
+      color: #0a0a0a;
+    }
+
+    .day-cell.work-day {
+      background: linear-gradient(135deg, #ef4444, #dc2626);
+      color: #fff;
+    }
+
+    .day-cell.work-day.weekend {
+      color: #0a0a0a;
+    }
+
+    .day-cell.off-day {
+      background: linear-gradient(135deg, #10b981, #059669);
+      color: #fff;
+    }
+
+    .day-cell.off-day.weekend {
+      color: #0a0a0a;
+    }
+
+    .day-cell.today .day-number {
+      width: 2em;
+      height: 2em;
+      border-radius: 50%;
+      background: #2563eb;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.3);
+    }
+
+    .day-cell.work-day.today .day-number,
+    .day-cell.off-day.today .day-number {
+      background: #fff;
+      color: #0a0a0a;
+      box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.4);
+    }
+
+    .day-cell.empty {
       background: transparent;
-      border-color: transparent;
     }
 
-    /* Ay Seçici Modal */
-    .month-picker-overlay {
+    /* Modal */
+    .modal-overlay {
       display: none;
       position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: rgba(0, 0, 0, 0.7);
-      z-index: 1000;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.8);
+      backdrop-filter: blur(8px);
       align-items: center;
       justify-content: center;
+      z-index: 1000;
     }
 
-    .month-picker-overlay.active {
+    .modal-overlay.active {
       display: flex;
     }
 
-    .month-picker {
-      background: #1e293b;
-      border-radius: 10px;
-      padding: 16px;
-      max-width: 320px;
+    .modal {
+      background: #141414;
+      border-radius: 16px;
+      padding: 20px;
       width: 90%;
-      border: 2px solid #334155;
+      max-width: 320px;
+      border: 2px solid #222;
     }
 
-    .picker-header {
+    .modal-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 12px;
+      margin-bottom: 14px;
     }
 
-    .picker-title {
-      font-size: 1rem;
+    .modal-title {
+      font-size: 1.1rem;
       font-weight: 700;
-      color: #f8fafc;
+      color: #fff;
     }
 
-    .picker-close {
-      background: transparent;
+    .close-btn {
+      background: #1a1a1a;
       border: none;
-      color: #94a3b8;
+      color: #888;
       font-size: 1.5rem;
+      width: 34px;
+      height: 34px;
+      border-radius: 8px;
       cursor: pointer;
-      padding: 0;
-      width: 30px;
-      height: 30px;
       display: flex;
       align-items: center;
       justify-content: center;
+      transition: all 0.2s;
+    }
+
+    .close-btn:active {
+      background: #222;
     }
 
     .year-selector {
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 12px;
-      margin-bottom: 12px;
+      gap: 14px;
+      margin-bottom: 14px;
     }
 
     .year-btn {
-      background: #334155;
-      border: none;
-      color: #e2e8f0;
-      padding: 8px 12px;
-      border-radius: 6px;
-      font-weight: 600;
+      background: #1a1a1a;
+      border: 2px solid #222;
+      color: #e5e5e5;
+      padding: 8px 14px;
+      border-radius: 8px;
+      font-weight: 700;
+      font-size: 1.1rem;
       cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .year-btn:active {
+      background: #222;
     }
 
     .year-display {
-      font-size: 1.1rem;
-      font-weight: 700;
-      color: #f8fafc;
-      min-width: 80px;
+      font-size: 1.2rem;
+      font-weight: 800;
+      color: #fff;
+      min-width: 85px;
       text-align: center;
     }
 
@@ -475,87 +432,86 @@
       gap: 8px;
     }
 
-    .month-option {
+    .month-btn {
       padding: 12px 8px;
-      background: #334155;
-      border: 2px solid transparent;
-      border-radius: 6px;
+      background: #1a1a1a;
+      border: 2px solid #222;
+      border-radius: 8px;
       text-align: center;
       font-size: 0.85rem;
-      font-weight: 600;
-      color: #cbd5e1;
+      font-weight: 700;
+      color: #888;
       cursor: pointer;
       transition: all 0.2s;
     }
 
-    .month-option:active {
-      transform: scale(0.95);
+    .month-btn:active {
+      transform: scale(0.96);
     }
 
-    .month-option.current {
-      background: #3b82f6;
+    .month-btn.current {
+      background: #2563eb;
+      border-color: #2563eb;
       color: #fff;
     }
   </style>
 
 </head>
 <body>
-<main class="container">
-  <h1>⏰ Vardiya Takvimi</h1>
-  <p class="description">
-    Vardiya tipini ve en son işten çıktığın günü seç.
-  </p>
+<div class="container">
+  <h1>
+    <svg class="calendar-icon" viewBox="0 0 24 24">
+      <rect x="3" y="4" width="18" height="18" rx="2"/>
+      <line x1="16" y1="2" x2="16" y2="6"/>
+      <line x1="8" y1="2" x2="8" y2="6"/>
+      <line x1="3" y1="10" x2="21" y2="10"/>
+    </svg>
+    Vardiya Takvimi
+  </h1>
+  <p class="description">Vardiya tipini ve işten çıkış gününü seç.</p>
 
-  <!-- Vardiya Tipi -->
-
-<label class="shift-label">Vardiya Tipi</label>
-
+  <div class="section-label">Vardiya Tipi</div>
   <div class="shift-types">
-    <button type="button" class="shift-type-btn active" id="shift2448">
-      <span class="shift-main">24/48</span>
-      <span class="shift-sub">24s çalış, 48s tat</span>
-    </button>
-    <button type="button" class="shift-type-btn" id="shift1236">
-      <span class="shift-main">12/36</span>
-      <span class="shift-sub">12s çalış, 36s tat</span>
-    </button>
+    <button class="shift-btn active" id="shift2448">24/48</button>
+    <button class="shift-btn" id="shift1236">12/36</button>
   </div>
 
-  <!-- Çıkış Tarihi -->
-
-<label class="controls-label">İşten Çıkış</label>
-
+  <div class="section-label">İşten Çıkış</div>
   <div class="controls-grid">
-    <button type="button" class="control-btn" id="setToday">Bugün</button>
-    <button type="button" class="control-btn" id="setYesterday">Dün</button>
-    <button type="button" class="control-btn" id="setTwoDaysAgo">2 Gün Önce</button>
+    <button class="control-btn" id="setYesterday">Dün</button>
+    <button class="control-btn" id="setToday">Bugün</button>
+    <button class="control-btn" id="setTomorrow">Yarın</button>
   </div>
-
-  <!-- Takvim Başlık -->
 
   <div class="calendar-header">
-    <button class="today-btn" id="todayBtn">🏠</button>
+    <button class="nav-btn" id="todayBtn">
+      <svg class="nav-icon" viewBox="0 0 24 24">
+        <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/>
+      </svg>
+    </button>
     <div class="month-title" id="monthTitle"></div>
-    <div class="month-nav">
-      <button class="cal-nav-btn" id="prevMonthBtn">◀</button>
-      <button class="cal-nav-btn" id="nextMonthBtn">▶</button>
-    </div>
+    <button class="nav-btn" id="prevBtn">
+      <svg class="nav-icon" viewBox="0 0 24 24">
+        <polyline points="15 18 9 12 15 6"/>
+      </svg>
+    </button>
+    <button class="nav-btn" id="nextBtn">
+      <svg class="nav-icon" viewBox="0 0 24 24">
+        <polyline points="9 18 15 12 9 6"/>
+      </svg>
+    </button>
   </div>
 
-  <!-- İstatistik -->
-
   <div class="stats">
-    <div class="stat-item stat-work">
+    <div class="stat-box stat-work">
       <span class="stat-value" id="workDays">0</span>
       <span class="stat-label">Çalışma</span>
     </div>
-    <div class="stat-item stat-off">
+    <div class="stat-box stat-off">
       <span class="stat-value" id="offDays">0</span>
       <span class="stat-label">Tatil</span>
     </div>
   </div>
-
-  <!-- Gösterge -->
 
   <div class="legend">
     <div class="legend-item">
@@ -569,327 +525,227 @@
     </div>
   </div>
 
-  <!-- Takvim -->
+  <div class="calendar-grid" id="calendar"></div>
+</div>
 
-  <div class="calendar-grid" id="calendarGrid"></div>
-</main>
-
-<!-- Ay Seçici Modal -->
-
-<div class="month-picker-overlay" id="monthPickerOverlay">
-  <div class="month-picker">
-    <div class="picker-header">
-      <div class="picker-title">Ay Seç</div>
-      <button class="picker-close" id="pickerClose">×</button>
+<div class="modal-overlay" id="modal">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">Ay Seç</div>
+      <button class="close-btn" id="closeModal">×</button>
     </div>
     <div class="year-selector">
-      <button class="year-btn" id="prevYearBtn">◀</button>
+      <button class="year-btn" id="prevYear">◀</button>
       <div class="year-display" id="yearDisplay"></div>
-      <button class="year-btn" id="nextYearBtn">▶</button>
+      <button class="year-btn" id="nextYear">▶</button>
     </div>
     <div class="months-grid" id="monthsGrid"></div>
   </div>
 </div>
 
 <script>
-  document.addEventListener("contextmenu", (e) => e.preventDefault());
-  let lastTouchEnd = 0;
-  document.addEventListener("touchend", (event) => {
-    const now = Date.now();
-    if (now - lastTouchEnd <= 300) {
-      event.preventDefault();
-    }
-    lastTouchEnd = now;
-  }, { passive: false });
-
-  const trMonths = [
-    "Ocak", "Şubat", "Mart", "Nisan", "Mayıs", "Haziran",
-    "Temmuz", "Ağustos", "Eylül", "Ekim", "Kasım", "Aralık"
-  ];
-  const trWeekdaysShort = ["Pzt", "Sal", "Çar", "Per", "Cum", "Cmt", "Paz"];
-
-  const shift2448Btn = document.getElementById("shift2448");
-  const shift1236Btn = document.getElementById("shift1236");
-  const setTodayBtn = document.getElementById("setToday");
-  const setYesterdayBtn = document.getElementById("setYesterday");
-  const setTwoDaysAgoBtn = document.getElementById("setTwoDaysAgo");
-  const monthTitle = document.getElementById("monthTitle");
-  const calendarGrid = document.getElementById("calendarGrid");
-  const prevMonthBtn = document.getElementById("prevMonthBtn");
-  const nextMonthBtn = document.getElementById("nextMonthBtn");
-  const todayBtn = document.getElementById("todayBtn");
-  const workDaysEl = document.getElementById("workDays");
-  const offDaysEl = document.getElementById("offDays");
-  const monthPickerOverlay = document.getElementById("monthPickerOverlay");
-  const pickerClose = document.getElementById("pickerClose");
-  const prevYearBtn = document.getElementById("prevYearBtn");
-  const nextYearBtn = document.getElementById("nextYearBtn");
-  const yearDisplay = document.getElementById("yearDisplay");
-  const monthsGrid = document.getElementById("monthsGrid");
-
-  let lastExitDate = null;
+  const trMonths = ["Ocak", "Şubat", "Mart", "Nisan", "Mayıs", "Haziran", "Temmuz", "Ağustos", "Eylül", "Ekim", "Kasım", "Aralık"];
+  const trDays = ["Pzt", "Sal", "Çar", "Per", "Cum", "Cmt", "Paz"];
+  
   let shiftType = "24-48";
+  let lastExitDate = null;
   const today = new Date();
   let currentYear = today.getFullYear();
   let currentMonth = today.getMonth();
   let pickerYear = currentYear;
 
-  function formatDate(d) {
-    const y = d.getFullYear();
-    const m = String(d.getMonth() + 1).padStart(2, "0");
-    const da = String(d.getDate()).padStart(2, "0");
-    return `${y}-${m}-${da}`;
+  const $ = id => document.getElementById(id);
+
+  function fmt(d) {
+    return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
   }
 
-  function toDateOnly(d) {
+  function dateOnly(d) {
     return new Date(d.getFullYear(), d.getMonth(), d.getDate());
   }
 
-  function sameDate(a, b) {
-    return (
-      a.getFullYear() === b.getFullYear() &&
-      a.getMonth() === b.getMonth() &&
-      a.getDate() === b.getDate()
-    );
+  function sameDay(a, b) {
+    return a.getFullYear() === b.getFullYear() && a.getMonth() === b.getMonth() && a.getDate() === b.getDate();
   }
 
-  function saveShiftType(type) {
+  function saveShift(type) {
     shiftType = type;
     localStorage.setItem("shiftType", type);
-    
-    shift2448Btn.classList.toggle("active", type === "24-48");
-    shift1236Btn.classList.toggle("active", type === "12-36");
-    
-    renderCalendar();
+    $("shift2448").classList.toggle("active", type === "24-48");
+    $("shift1236").classList.toggle("active", type === "12-36");
+    render();
   }
 
-  function saveLastExitDate(dateStr) {
-    if (!dateStr) return;
+  function saveExit(dateStr) {
     localStorage.setItem("lastExitDate", dateStr);
     lastExitDate = new Date(dateStr + "T00:00:00");
+    updateButtons(dateStr);
+    render();
+  }
+
+  function updateButtons(dateStr) {
+    const t = new Date();
+    const y = new Date(t); y.setDate(t.getDate() - 1);
+    const tm = new Date(t); tm.setDate(t.getDate() + 1);
     
-    updateActiveButtons(dateStr);
-    renderCalendar();
+    $("setToday").classList.toggle("active", dateStr === fmt(t));
+    $("setYesterday").classList.toggle("active", dateStr === fmt(y));
+    $("setTomorrow").classList.toggle("active", dateStr === fmt(tm));
   }
 
-  function updateActiveButtons(dateStr) {
-    const todayDate = new Date();
-    const yesterdayDate = new Date();
-    yesterdayDate.setDate(todayDate.getDate() - 1);
-    const twoDaysAgoDate = new Date();
-    twoDaysAgoDate.setDate(todayDate.getDate() - 2);
-
-    const todayStr = formatDate(todayDate);
-    const yesterdayStr = formatDate(yesterdayDate);
-    const twoDaysAgoStr = formatDate(twoDaysAgoDate);
-
-    setTodayBtn.classList.toggle("active", dateStr === todayStr);
-    setYesterdayBtn.classList.toggle("active", dateStr === yesterdayStr);
-    setTwoDaysAgoBtn.classList.toggle("active", dateStr === twoDaysAgoStr);
-  }
-
-  function setExitFromOffset(offsetDays) {
+  function setExit(offset) {
     const d = new Date();
-    d.setDate(d.getDate() - offsetDays);
-    const str = formatDate(d);
-    saveLastExitDate(str);
+    d.setDate(d.getDate() + offset);
+    saveExit(fmt(d));
   }
 
-  function loadFromStorage() {
-    const storedShift = localStorage.getItem("shiftType");
-    if (storedShift) {
-      shiftType = storedShift;
-      shift2448Btn.classList.toggle("active", shiftType === "24-48");
-      shift1236Btn.classList.toggle("active", shiftType === "12-36");
+  function load() {
+    const st = localStorage.getItem("shiftType");
+    if (st) {
+      shiftType = st;
+      $("shift2448").classList.toggle("active", st === "24-48");
+      $("shift1236").classList.toggle("active", st === "12-36");
     }
-
-    const stored = localStorage.getItem("lastExitDate");
-    if (stored) {
-      saveLastExitDate(stored);
-    } else {
-      setExitFromOffset(0);
-    }
+    const ex = localStorage.getItem("lastExitDate");
+    if (ex) saveExit(ex);
+    else setExit(0);
   }
 
   function getDayType(date) {
     if (!lastExitDate) return "none";
-    const msPerDay = 24 * 60 * 60 * 1000;
-    const diff = Math.floor((toDateOnly(date) - lastExitDate) / msPerDay);
-    
+    const diff = Math.floor((dateOnly(date) - lastExitDate) / 86400000);
     if (shiftType === "24-48") {
-      const mod = ((diff % 3) + 3) % 3;
-      if (mod === 0 || mod === 1) return "off";
-      if (mod === 2) return "work";
-    } else if (shiftType === "12-36") {
-      const mod = ((diff % 2) + 2) % 2;
-      if (mod === 0) return "off";
-      if (mod === 1) return "work";
+      const m = ((diff % 3) + 3) % 3;
+      return (m === 0 || m === 1) ? "off" : "work";
+    } else {
+      const m = ((diff % 2) + 2) % 2;
+      return m === 0 ? "off" : "work";
     }
-    
-    return "none";
   }
 
-  function isWeekend(date) {
-    const jsDay = date.getDay();
-    return jsDay === 0 || jsDay === 6;
+  function isWeekend(d) {
+    const day = d.getDay();
+    return day === 0 || day === 6;
   }
 
-  function calculateStats() {
+  function calcStats() {
     const lastDay = new Date(currentYear, currentMonth + 1, 0);
-    let workCount = 0;
-    let offCount = 0;
-
-    for (let day = 1; day <= lastDay.getDate(); day++) {
-      const date = new Date(currentYear, currentMonth, day);
-      const type = getDayType(date);
-      if (type === "work") workCount++;
-      else if (type === "off") offCount++;
+    let work = 0, off = 0;
+    for (let i = 1; i <= lastDay.getDate(); i++) {
+      const type = getDayType(new Date(currentYear, currentMonth, i));
+      if (type === "work") work++;
+      else if (type === "off") off++;
     }
-
-    workDaysEl.textContent = workCount;
-    offDaysEl.textContent = offCount;
+    $("workDays").textContent = work;
+    $("offDays").textContent = off;
   }
 
-  function renderCalendar() {
-    calendarGrid.innerHTML = "";
-    const todayDateOnly = toDateOnly(today);
+  function render() {
+    const cal = $("calendar");
+    cal.innerHTML = "";
+    const todayDate = dateOnly(today);
 
-    trWeekdaysShort.forEach(day => {
+    trDays.forEach(d => {
       const div = document.createElement("div");
-      div.className = "weekday-header";
-      div.textContent = day;
-      calendarGrid.appendChild(div);
+      div.className = "weekday";
+      div.textContent = d;
+      cal.appendChild(div);
     });
 
-    const firstDay = new Date(currentYear, currentMonth, 1);
-    const lastDay = new Date(currentYear, currentMonth + 1, 0);
-    const firstWeekdayIndex = (firstDay.getDay() + 6) % 7;
+    const first = new Date(currentYear, currentMonth, 1);
+    const last = new Date(currentYear, currentMonth + 1, 0);
+    const startDay = (first.getDay() + 6) % 7;
 
-    for (let i = 0; i < firstWeekdayIndex; i++) {
-      const cell = document.createElement("div");
-      cell.className = "day-cell empty";
-      calendarGrid.appendChild(cell);
+    for (let i = 0; i < startDay; i++) {
+      const div = document.createElement("div");
+      div.className = "day-cell empty";
+      cal.appendChild(div);
     }
 
-    for (let day = 1; day <= lastDay.getDate(); day++) {
+    for (let day = 1; day <= last.getDate(); day++) {
       const date = new Date(currentYear, currentMonth, day);
-      const cell = document.createElement("div");
-      cell.className = "day-cell";
+      const div = document.createElement("div");
+      div.className = "day-cell";
 
       const type = getDayType(date);
+      if (type === "work") div.classList.add("work-day");
+      else if (type === "off") div.classList.add("off-day");
+      
+      if (isWeekend(date)) div.classList.add("weekend");
+      if (sameDay(date, todayDate)) div.classList.add("today");
 
-      if (type === "work") {
-        cell.classList.add("work-day");
-      } else if (type === "off") {
-        cell.classList.add("off-day");
-      }
-
-      if (isWeekend(date)) {
-        cell.classList.add("weekend");
-      }
-
-      if (sameDate(date, todayDateOnly)) {
-        cell.classList.add("today");
-      }
-
-      const numSpan = document.createElement("span");
-      numSpan.className = "day-number";
-      numSpan.textContent = day;
-
-      cell.appendChild(numSpan);
-      calendarGrid.appendChild(cell);
+      const span = document.createElement("span");
+      span.className = "day-number";
+      span.textContent = day;
+      div.appendChild(span);
+      cal.appendChild(div);
     }
 
-    monthTitle.textContent = `${trMonths[currentMonth]} ${currentYear}`;
-    calculateStats();
+    $("monthTitle").textContent = `${trMonths[currentMonth]} ${currentYear}`;
+    calcStats();
   }
 
-  function goToToday() {
+  function goToday() {
     currentYear = today.getFullYear();
     currentMonth = today.getMonth();
-    renderCalendar();
+    render();
   }
 
-  function openMonthPicker() {
+  function openModal() {
     pickerYear = currentYear;
-    renderMonthPicker();
-    monthPickerOverlay.classList.add("active");
+    renderMonths();
+    $("modal").classList.add("active");
   }
 
-  function closeMonthPicker() {
-    monthPickerOverlay.classList.remove("active");
+  function closeModal() {
+    $("modal").classList.remove("active");
   }
 
-  function renderMonthPicker() {
-    yearDisplay.textContent = pickerYear;
-    monthsGrid.innerHTML = "";
-
-    trMonths.forEach((month, index) => {
+  function renderMonths() {
+    $("yearDisplay").textContent = pickerYear;
+    const grid = $("monthsGrid");
+    grid.innerHTML = "";
+    trMonths.forEach((m, i) => {
       const btn = document.createElement("div");
-      btn.className = "month-option";
-      btn.textContent = month;
-      
-      if (index === currentMonth && pickerYear === currentYear) {
-        btn.classList.add("current");
-      }
-
-      btn.addEventListener("click", () => {
-        currentMonth = index;
+      btn.className = "month-btn";
+      btn.textContent = m;
+      if (i === currentMonth && pickerYear === currentYear) btn.classList.add("current");
+      btn.onclick = () => {
+        currentMonth = i;
         currentYear = pickerYear;
-        renderCalendar();
-        closeMonthPicker();
-      });
-
-      monthsGrid.appendChild(btn);
+        render();
+        closeModal();
+      };
+      grid.appendChild(btn);
     });
   }
 
-  shift2448Btn.addEventListener("click", () => saveShiftType("24-48"));
-  shift1236Btn.addEventListener("click", () => saveShiftType("12-36"));
-
-  setTodayBtn.addEventListener("click", () => setExitFromOffset(0));
-  setYesterdayBtn.addEventListener("click", () => setExitFromOffset(1));
-  setTwoDaysAgoBtn.addEventListener("click", () => setExitFromOffset(2));
-
-  prevMonthBtn.addEventListener("click", () => {
-    currentMonth--;
-    if (currentMonth < 0) {
-      currentMonth = 11;
-      currentYear--;
-    }
-    renderCalendar();
-  });
-
-  nextMonthBtn.addEventListener("click", () => {
-    currentMonth++;
-    if (currentMonth > 11) {
-      currentMonth = 0;
-      currentYear++;
-    }
-    renderCalendar();
-  });
-
-  todayBtn.addEventListener("click", goToToday);
-  monthTitle.addEventListener("click", openMonthPicker);
-  pickerClose.addEventListener("click", closeMonthPicker);
-  monthPickerOverlay.addEventListener("click", (e) => {
-    if (e.target === monthPickerOverlay) closeMonthPicker();
-  });
-
-  prevYearBtn.addEventListener("click", () => {
-    pickerYear--;
-    renderMonthPicker();
-  });
-
-  nextYearBtn.addEventListener("click", () => {
-    pickerYear++;
-    renderMonthPicker();
-  });
-
-  loadFromStorage();
+  $("shift2448").onclick = () => saveShift("24-48");
+  $("shift1236").onclick = () => saveShift("12-36");
+  $("setYesterday").onclick = () => setExit(-1);
+  $("setToday").onclick = () => setExit(0);
+  $("setTomorrow").onclick = () => setExit(1);
+  $("todayBtn").onclick = goToday;
+  $("monthTitle").onclick = openModal;
+  $("closeModal").onclick = closeModal;
+  $("modal").onclick = e => { if (e.target === $("modal")) closeModal(); };
   
-  // Lucide ikonlarını başlat
-  lucide.createIcons();
+  $("prevBtn").onclick = () => {
+    currentMonth--;
+    if (currentMonth < 0) { currentMonth = 11; currentYear--; }
+    render();
+  };
+  
+  $("nextBtn").onclick = () => {
+    currentMonth++;
+    if (currentMonth > 11) { currentMonth = 0; currentYear++; }
+    render();
+  };
+  
+  $("prevYear").onclick = () => { pickerYear--; renderMonths(); };
+  $("nextYear").onclick = () => { pickerYear++; renderMonths(); };
+
+  load();
 </script>
 
 </body>
