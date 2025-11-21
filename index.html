@@ -3,7 +3,30 @@
 <head>
   <meta charset="UTF-8" />
   <title>Takvim Uygulaması</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+
+  <!-- PWA / iPhone Tam Ekran -->
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Takvim">
+  <meta name="mobile-web-app-capable" content="yes">
+
+  <!-- PWA Manifest -->
+  <link rel="manifest" href="manifest.json">
+
+  <!-- iOS Icon & Splash -->
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon-180.png">
+  <!-- Modern iPhone 12/13/14 boyutu için örnek splash -->
+  <link rel="apple-touch-startup-image" href="icons/splash-1170x2532.png">
+
+  <!-- Service Worker (offline + PWA) -->
+  <script>
+    if ("serviceWorker" in navigator) {
+      window.addEventListener("load", () => {
+        navigator.serviceWorker.register("sw.js");
+      });
+    }
+  </script>
 
   <style>
     /* GENEL KİLİTLER & ORTAK TEMEL STİL */
@@ -30,53 +53,98 @@
       color: #f5f5f5;
     }
 
-    /* SAYFALAR */
-    .page {
-      position: absolute;
+    /* ---------- WEB APP LOADER ---------- */
+    #appLoader {
+      position: fixed;
       inset: 0;
-      width: 100%;
-      height: 100%;
-      display: none;
-      overflow: hidden;
-    }
-    .page.active {
-      display: block;
-    }
-
-    .container {
-      width: 100%;
-      max-width: 480px;
-      height: 100%;
-      max-height: 100vh;
-      margin: 0 auto;
+      background: #000;
       display: flex;
       flex-direction: column;
-      overflow-y: auto;
-      overflow-x: hidden;
-      -webkit-overflow-scrolling: touch;
-      padding: 8px;
-    }
-
-    .header {
-      text-align: center;
-      flex-shrink: 0;
-    }
-
-    h1 {
-      font-size: 1.5rem;
-      font-weight: 800;
-      color: #fff;
-      letter-spacing: -0.02em;
-      display: flex;
       align-items: center;
       justify-content: center;
-      gap: 8px;
-      cursor: pointer; /* gizli buton */
+      z-index: 9999;
+      transition: opacity .5s ease;
     }
 
-    .hidden-link {
-      cursor: pointer;
+    .loader-circle {
+      width: 40px;
+      height: 40px;
+      border: 4px solid #333;
+      border-top: 4px solid #0d6efd;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
     }
+
+    .loader-text {
+      margin-top: 12px;
+      color: #fff;
+      font-size: 0.9rem;
+      letter-spacing: 0.04em;
+      opacity: 0.8;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    /* ---------- WEB APP LOADER BİTİŞ ---------- */
+
+    /* SAYFALAR */
+  /* SAYFALAR */
+.page {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: none;
+  overflow: hidden;
+
+  /* iPhone PWA çentik uyumu */
+  padding-top: env(safe-area-inset-top);
+}
+
+.page.active {
+  display: block;
+}
+
+.container {
+  width: 100%;
+  max-width: 480px;
+  height: 100%;
+  max-height: 100vh;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+
+  /* İç padding sabit kalsın diye sadece sol/sağ */
+  padding: 8px;
+}
+
+.header {
+  text-align: center;
+  flex-shrink: 0;
+
+  /* Artık safe-area'yı page çözdüğü için burada EKSTRA padding gerekmez */
+  /* padding-top: env(safe-area-inset-top);  ← SİLİNDİ */
+}
+
+h1 {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: #fff;
+  letter-spacing: -0.02em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  cursor: pointer; /* gizli buton */
+}
+
+.hidden-link {
+  cursor: pointer;
+}
 
     /* ---------------- VARDİYA TAKVİMİ (SAYFA 1) ---------------- */
 
@@ -879,6 +947,13 @@
 </head>
 <body>
 
+<!-- WEB APP LOADER -->
+<div id="appLoader">
+  <div class="loader-circle"></div>
+  <div class="loader-text">Yükleniyor...</div>
+</div>
+<!-- /WEB APP LOADER -->
+
 <!-- SAYFA 1: VARDİYA TAKVİMİ -->
 <div id="page1" class="page active">
   <div class="container">
@@ -1670,6 +1745,15 @@ document.addEventListener("touchend", function (event) {
   }
   lastTouchEnd = now;
 }, { passive: false });
+
+/* --- Loader'ı kapat --- */
+window.addEventListener("load", () => {
+  const loader = document.getElementById("appLoader");
+  if (loader) {
+    loader.style.opacity = "0";
+    setTimeout(() => loader.remove(), 500);
+  }
+});
 </script>
 
 </body>
